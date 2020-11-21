@@ -21,12 +21,12 @@ import org.jetbrains.annotations.NotNull;
 public record Name(@NotNull String rawValue) {
 
   @NotNull
-  String typeName() {
+  public String typeName() {
     return formatted(String::toUpperCase);
   }
 
   @NotNull
-  String fieldName() {
+  public String fieldName() {
     return formatted(String::toLowerCase);
   }
 
