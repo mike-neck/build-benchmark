@@ -31,6 +31,9 @@ public interface JavaDefinition {
   String javaName();
 
   @NotNull
+  String fieldName();
+
+  @NotNull
   default ClassName type() {
     return ClassName.get(packageName, javaName());
   }

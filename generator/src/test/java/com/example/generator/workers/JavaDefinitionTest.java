@@ -48,6 +48,11 @@ public class JavaDefinitionTest {
       return "SimpleDef";
     }
 
+    @Override
+    public @NotNull String fieldName() {
+      return "simpleDef";
+    }
+
     @NotNull
     @Override
     public JavaFile create() {

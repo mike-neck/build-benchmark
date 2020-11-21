@@ -41,6 +41,11 @@ public final class DomainId implements JavaDefinition {
     return "%sId".formatted(name.typeName());
   }
 
+  @Override
+  public @NotNull String fieldName() {
+    return "%sId".formatted(name.fieldName());
+  }
+
   @NotNull
   @Override
   public JavaFile create() {
