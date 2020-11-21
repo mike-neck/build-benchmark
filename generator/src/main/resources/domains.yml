@@ -1,0 +1,18 @@
+domains:
+  - user
+  - role
+  - organization
+  - team
+  - iteration
+  - iterationPlan
+  - project
+  - issue
+  - hook
+  - gitRepository
+  - paymentMethod
+  - invoice
+  - payment
+  - resource
+  - chatRoom
+  - roomMessage
+  - roomMessageAttachment

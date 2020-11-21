@@ -11,6 +11,7 @@ repositories {
 
 dependencies {
   implementation 'com.squareup:javapoet:1.13.0'
+  implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.11.2'
   testImplementation 'org.junit.jupiter:junit-jupiter:5.7.0'
 }
 
