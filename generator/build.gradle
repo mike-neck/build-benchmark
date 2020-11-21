@@ -12,6 +12,7 @@ repositories {
 }
 
 dependencies {
+  compileOnly 'org.jetbrains:annotations:19.0.0'
   implementation 'com.squareup:javapoet:1.13.0'
   implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.11.2'
   testImplementation 'org.junit.jupiter:junit-jupiter:5.7.0'
@@ -27,4 +28,12 @@ application {
 
 tasks.named('run').configure {
   it.outputs.dir("${project(':app').projectDir}/src/main/generated")
+}
+
+tasks.withType(JavaCompile) {
+  options.compilerArgs = ["--enable-preview"]
+}
+
+tasks.withType(JavaExec) {
+  jvmArgs('--enable-preview')
 }

@@ -7,6 +7,9 @@ repositories {
     jcenter()
 }
 
+sourceCompatibility = JavaVersion.VERSION_15
+targetCompatibility = JavaVersion.VERSION_15
+
 sourceSets {
     main {
         java {
