@@ -7,6 +7,14 @@ repositories {
     jcenter()
 }
 
+sourceSets {
+    main {
+        java {
+            srcDirs('src/main/java', 'src/main/generated')
+        }
+    }
+}
+
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
@@ -16,6 +24,6 @@ application {
     mainClass = 'com.example.App'
 }
 
-tasks.named('test') {
+tasks.withType(Test) {
     useJUnitPlatform()
 }

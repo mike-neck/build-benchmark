@@ -24,3 +24,7 @@ test {
 application {
   mainClass = 'com.example.generator.Generator'
 }
+
+tasks.named('run').configure {
+  it.outputs.dir("${project(':app').projectDir}/src/main/generated")
+}
