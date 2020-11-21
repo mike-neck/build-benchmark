@@ -1,0 +1,20 @@
+plugins {
+  id 'application'
+}
+
+sourceCompatibility = JavaVersion.VERSION_15
+targetCompatibility = JavaVersion.VERSION_15
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  implementation 'com.squareup:javapoet:1.13.0'
+  testImplementation 'org.junit.jupiter:junit-jupiter:5.7.0'
+}
+
+test {
+  useJUnitPlatform()
+}
+
