@@ -29,4 +29,5 @@ hs_err_pid*
 # Ignore Gradle build output directory
 build
 
-app/src/main/generated/
+with-interface/src/main/java/
+without-interface/src/main/java/

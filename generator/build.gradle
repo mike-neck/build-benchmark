@@ -1,5 +1,5 @@
 plugins {
-  id 'application'
+  id 'java'
   id 'google-java-format'
 }
 
@@ -25,18 +25,16 @@ test {
   jvmArgs('--enable-preview')
 }
 
-application {
-  mainClass = 'com.example.generator.Generator'
-}
-
-tasks.named('run').configure {
-  it.outputs.dir("${project(':app').projectDir}/src/main/generated")
-}
-
 tasks.withType(JavaCompile) {
   options.compilerArgs = ["--enable-preview"]
 }
 
 tasks.withType(JavaExec) {
   jvmArgs('--enable-preview')
+}
+
+tasks.register('generate-with-interface', JavaExec) {
+  it.mainClass.set('com.example.generator.Generator')
+  it.classpath(configurations.runtimeClasspath, sourceSets.main.output)
+  it.outputs.dir()
 }

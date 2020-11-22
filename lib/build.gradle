@@ -1,5 +1,5 @@
 plugins {
-    id 'application'
+    id 'java-library'
     id 'google-java-format'
 }
 
@@ -11,23 +11,11 @@ repositories {
 sourceCompatibility = JavaVersion.VERSION_15
 targetCompatibility = JavaVersion.VERSION_15
 
-sourceSets {
-    main {
-        java {
-            srcDirs('src/main/java', 'src/main/generated')
-        }
-    }
-}
-
 dependencies {
     compileOnly 'org.jetbrains:annotations:19.0.0'
     testImplementation 'org.assertj:assertj-core:3.18.1'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
-}
-
-application {
-    mainClass = 'com.example.App'
 }
 
 tasks.withType(Test) {
