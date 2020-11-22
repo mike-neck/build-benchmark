@@ -15,9 +15,11 @@
  */
 package com.example.generator.workers;
 
+import com.example.generator.LoggingApp;
 import com.example.generator.Name;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Optional;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
@@ -57,23 +59,81 @@ public class Provider implements ParameterResolver {
             .getTestClass()
             .flatMap(klass -> Optional.ofNullable(klass.getAnnotation(TestFor.class)))
             .orElseThrow(() -> new IllegalStateException("TestFor is not annotated to class"));
+    Optional<Method> testMethod = extensionContext.getTestMethod();
     WithName withName =
-        extensionContext
-            .getTestMethod()
+        testMethod
             .flatMap(method -> Optional.ofNullable(method.getAnnotation(WithName.class)))
             .orElseThrow(() -> new IllegalStateException("WithName is not annotated to method"));
-    Class<? extends JavaDefinition> klass = testFor.value();
-    try {
-      Constructor<? extends JavaDefinition> constructor = klass.getConstructor(Name.class);
-      Name name = new Name(withName.value());
-      constructor.setAccessible(true);
-      return constructor.newInstance(name);
-    } catch (NoSuchMethodException
-        | IllegalAccessException
-        | InstantiationException
-        | InvocationTargetException e) {
-      throw new IllegalStateException(
-          "failed to initialize target class[%s]".formatted(klass.getSimpleName()), e);
+    Optional<LoggingParam> loggingParam =
+        testMethod.flatMap(method -> Optional.ofNullable(method.getAnnotation(LoggingParam.class)));
+    JavaDefinitionInitializer initializer =
+        loggingParam
+            .map(param -> loggingTypeInitializer(withName, param))
+            .orElseGet(() -> new NormalType(withName));
+    return initializer.initializeInstanceOf(testFor);
+  }
+
+  interface JavaDefinitionInitializer {
+    JavaDefinition initializeInstanceOf(TestFor testFor);
+  }
+
+  static JavaDefinitionInitializer loggingTypeInitializer(
+      WithName withName, LoggingParam loggingParam) {
+    return new LoggingType(withName, loggingParam);
+  }
+
+  static class NormalType implements JavaDefinitionInitializer {
+
+    final WithName withName;
+
+    NormalType(WithName withName) {
+      this.withName = withName;
+    }
+
+    @Override
+    public JavaDefinition initializeInstanceOf(TestFor testFor) {
+      Class<? extends JavaDefinition> klass = testFor.value();
+      try {
+        Constructor<? extends JavaDefinition> constructor = klass.getConstructor(Name.class);
+        Name name = new Name(withName.value());
+        constructor.setAccessible(true);
+        return constructor.newInstance(name);
+      } catch (NoSuchMethodException
+          | IllegalAccessException
+          | InstantiationException
+          | InvocationTargetException e) {
+        throw new IllegalStateException(
+            "failed to initialize target class[%s]".formatted(klass.getSimpleName()), e);
+      }
+    }
+  }
+
+  static class LoggingType implements JavaDefinitionInitializer {
+
+    final WithName withName;
+    final LoggingParam loggingParam;
+
+    LoggingType(WithName withName, LoggingParam loggingParam) {
+      this.withName = withName;
+      this.loggingParam = loggingParam;
+    }
+
+    @Override
+    public JavaDefinition initializeInstanceOf(TestFor testFor) {
+      Class<? extends JavaDefinition> klass = testFor.value();
+      try {
+        Constructor<? extends JavaDefinition> constructor =
+            klass.getConstructor(Name.class, LoggingApp.class);
+        Name name = new Name(withName.value());
+        constructor.setAccessible(true);
+        return constructor.newInstance(name, loggingParam.value());
+      } catch (NoSuchMethodException
+          | IllegalAccessException
+          | InstantiationException
+          | InvocationTargetException e) {
+        throw new IllegalStateException(
+            "failed to initialize target class[%s]".formatted(klass.getSimpleName()), e);
+      }
     }
   }
 }
