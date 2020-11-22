@@ -33,8 +33,17 @@ tasks.withType(JavaExec) {
   jvmArgs('--enable-preview')
 }
 
-tasks.register('generate-with-interface', JavaExec) {
-  it.mainClass.set('com.example.generator.Generator')
-  it.classpath(configurations.runtimeClasspath, sourceSets.main.output)
-  it.outputs.dir()
+['with-interface', 'without-interface'].each { String targetProject ->
+  [true, false].each { boolean useLogger ->
+    String loggingApp = useLogger? 'logging': 'no-logging'
+    JavaExec javaExecTask = tasks.create("generate-${targetProject}-$loggingApp", JavaExec)
+    javaExecTask.configure { JavaExec it ->
+      it.group('Code-Generation')
+
+      it.mainClass.set('com.example.generator.Generator')
+      it.classpath(configurations.runtimeClasspath, sourceSets.main.output)
+      it.outputs.dir(rootProject.file("with-interface/src/main/java"))
+      it.args = [loggingApp]
+    }
+  }
 }
