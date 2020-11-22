@@ -21,7 +21,10 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import javax.lang.model.element.Modifier;
 
 public class Generator {
@@ -36,6 +39,13 @@ public class Generator {
   }
 
   public static void main(String[] args) throws IOException {
+    System.out.println(
+        Arrays.stream(args)
+            .map(LoggingApp::fromStringOptionally)
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .map(log -> log.loggingCode("main").toString())
+            .collect(Collectors.joining(",")));
     Domains domains = Domains.load();
     System.out.println(domains);
     MethodSpec interfaceMethod =
