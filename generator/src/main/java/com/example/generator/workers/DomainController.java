@@ -18,14 +18,18 @@ package com.example.generator.workers;
 import com.example.generator.Name;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
+import com.squareup.javapoet.MethodSpec;
+import javax.lang.model.element.Modifier;
 import org.jetbrains.annotations.NotNull;
 
 public class DomainController implements JavaDefinition {
 
   private final Name name;
+  private final DomainService domainService;
 
   public DomainController(Name name) {
     this.name = name;
+    this.domainService = new DomainService(name);
   }
 
   @Override
@@ -44,6 +48,17 @@ public class DomainController implements JavaDefinition {
   }
 
   public FieldSpec serviceField() {
-    return FieldSpec.builder(Object.class, "fffff").build();
+    return FieldSpec.builder(domainService.type(), domainService.fieldName())
+        .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
+        .build();
+  }
+
+  public MethodSpec constructor() {
+    return MethodSpec.constructorBuilder()
+        .addModifiers(Modifier.PUBLIC)
+        .addParameter(domainService.type(), domainService.fieldName())
+        .addStatement(
+            "this.%s = %s".formatted(domainService.fieldName(), domainService.fieldName()))
+        .build();
   }
 }
