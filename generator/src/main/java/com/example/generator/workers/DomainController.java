@@ -16,19 +16,25 @@
 package com.example.generator.workers;
 
 import com.example.generator.Name;
+import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
 import javax.lang.model.element.Modifier;
 import org.jetbrains.annotations.NotNull;
 
 public class DomainController implements JavaDefinition {
 
   private final Name name;
+  private final Domain domain;
+  private final DomainId domainId;
   private final DomainService domainService;
 
   public DomainController(Name name) {
     this.name = name;
+    this.domain = new Domain(name);
+    this.domainId = new DomainId(name);
     this.domainService = new DomainService(name);
   }
 
@@ -59,6 +65,21 @@ public class DomainController implements JavaDefinition {
         .addParameter(domainService.type(), domainService.fieldName())
         .addStatement(
             "this.%s = %s".formatted(domainService.fieldName(), domainService.fieldName()))
+        .build();
+  }
+
+  public MethodSpec getMethod() {
+    ClassName responseType = ClassName.get("com.example", "Response");
+    return MethodSpec.methodBuilder("get")
+        .addModifiers(Modifier.PUBLIC)
+        .addParameter(long.class, domainId.fieldName())
+        .returns(ParameterizedTypeName.get(responseType, domain.type()))
+        .addStatement(
+            "$T id = new $T(%s)".formatted(domainId.fieldName()), domainId.type(), domainId.type())
+        .addStatement(
+            "$T %s = %s.findById(id)".formatted(domain.fieldName(), domainService.fieldName()),
+            domain.type())
+        .addStatement("return $T.ok(%s)".formatted(domain.fieldName()), responseType)
         .build();
   }
 }

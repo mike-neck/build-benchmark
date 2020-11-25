@@ -16,11 +16,14 @@
 package com.example.generator.workers;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assumptions.assumeThat;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
 import java.util.List;
 import java.util.Set;
 import javax.lang.model.element.Modifier;
@@ -149,18 +152,57 @@ class DomainControllerTest {
   @TestFactory
   @WithName("nyaCat")
   Iterable<DynamicTest> getMethod(DomainController controller) {
-    return List.of();
+    MethodSpec getMethod = controller.getMethod();
+    return List.of(
+        dynamicTest("getMethod is not null", () -> assertThat(getMethod).isNotNull()),
+        dynamicTest(
+            "getMethod is not constructor", () -> assertThat(getMethod.isConstructor()).isFalse()),
+        dynamicTest("getMethod is get", () -> assertThat(getMethod.name).isEqualTo("get")),
+        dynamicTest(
+            "getMethod's modifiers are public",
+            () -> assertThat(getMethod.modifiers).isEqualTo(Set.of(Modifier.PUBLIC))),
+        dynamicTest(
+            "getMethod has a long parameter",
+            () ->
+                assertThat(getMethod.parameters)
+                    .hasSize(1)
+                    .singleElement()
+                    .isEqualTo(ParameterSpec.builder(ClassName.LONG, "nyaCatId").build())),
+        dynamicTest(
+            "getMethod returns Response<NyaCat>",
+            () ->
+                assertThat(getMethod.returnType)
+                    .isEqualTo(
+                        ParameterizedTypeName.get(
+                            ClassName.get("com.example", "Response"),
+                            ClassName.get(JavaDefinition.packageName, "NyaCat")))),
+        dynamicTest(
+            "getMethod's body is not empty", () -> assertThat(getMethod.code.isEmpty()).isFalse()),
+        dynamicTest(
+            "NyaCatId instance is created in getMethod's body",
+            () ->
+                assertThat(getMethod.code.toString())
+                    .contains("NyaCatId id = new ", "NyaCatId(nyaCatId)")),
+        dynamicTest(
+            "Domain instance is got from service.findById(id)",
+            () ->
+                assertThat(getMethod.code.toString())
+                    .contains("NyaCat nyaCat = nyaCatService.findById(id);")),
+        dynamicTest(
+            "Response.ok will be called in getMethod's body",
+            () ->
+                assertThat(getMethod.code.toString()).contains("return ", "Response.ok(nyaCat);")));
   }
 
   @TestFactory
   @WithName("nyaCat")
   Iterable<DynamicTest> createMethod(DomainController controller) {
-    return List.of();
+    return List.of(dynamicTest("createMethod", () -> assumeThat(1).isEqualTo(2)));
   }
 
   @TestFactory
   @WithName("nyaCat")
   Iterable<DynamicTest> create(DomainController controller) {
-    return List.of();
+    return List.of(dynamicTest("create", () -> assumeThat(1).isEqualTo(2)));
   }
 }
