@@ -68,8 +68,9 @@ public class DomainController implements JavaDefinition {
         .build();
   }
 
+  private static final ClassName responseType = ClassName.get("com.example", "Response");
+
   public MethodSpec getMethod() {
-    ClassName responseType = ClassName.get("com.example", "Response");
     return MethodSpec.methodBuilder("get")
         .addModifiers(Modifier.PUBLIC)
         .addParameter(long.class, domainId.fieldName())
@@ -80,6 +81,21 @@ public class DomainController implements JavaDefinition {
             "$T %s = %s.findById(id)".formatted(domain.fieldName(), domainService.fieldName()),
             domain.type())
         .addStatement("return $T.ok(%s)".formatted(domain.fieldName()), responseType)
+        .build();
+  }
+
+  public MethodSpec createMethod() {
+    return MethodSpec.methodBuilder("create")
+        .returns(ParameterizedTypeName.get(responseType, ClassName.get(Void.class)))
+        .addModifiers(Modifier.PUBLIC)
+        .addStatement(
+            "$T %s = %s.createNew()".formatted(domainId.fieldName(), domainService.fieldName()),
+            domainId.type())
+        .addStatement(
+            "$T location = $S.formatted(%s.value)".formatted(domainId.fieldName()),
+            String.class,
+            "https://example.com/" + domain.fieldName() + "/%d")
+        .addStatement("return $T.created(location)", responseType)
         .build();
   }
 }

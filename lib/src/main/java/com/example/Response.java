@@ -15,20 +15,33 @@
  */
 package com.example;
 
+import java.util.Map;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class Response<T> {
 
   public final int status;
-  @NotNull public final T body;
+  @Nullable public final T body;
+  @NotNull public final Map<String, String> headers;
 
-  public Response(int status, @NotNull T body) {
+  private Response(int status, @Nullable T body) {
+    this(status, body, Map.of());
+  }
+
+  private Response(int status, @Nullable T body, @NotNull Map<String, String> headers) {
     this.status = status;
     this.body = body;
+    this.headers = headers;
   }
 
   @NotNull
   public static <T> Response<T> ok(@NotNull final T body) {
     return new Response<>(200, body);
+  }
+
+  @NotNull
+  public static Response<Void> created(String location) {
+    return new Response<>(201, null, Map.of("Location", location));
   }
 }

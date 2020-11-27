@@ -20,10 +20,12 @@ import static org.assertj.core.api.Assumptions.assumeThat;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import javax.lang.model.element.Modifier;
@@ -195,9 +197,61 @@ class DomainControllerTest {
   }
 
   @TestFactory
-  @WithName("nyaCat")
+  @WithName("fooBar")
   Iterable<DynamicTest> createMethod(DomainController controller) {
-    return List.of(dynamicTest("createMethod", () -> assumeThat(1).isEqualTo(2)));
+    MethodSpec createMethod = controller.createMethod();
+    return List.of(
+        dynamicTest("createMethod is not null", () -> assertThat(createMethod).isNotNull()),
+        dynamicTest(
+            "createMethod is not constructor",
+            () -> assertThat(createMethod.isConstructor()).isFalse()),
+        dynamicTest(
+            "createMethod's name is create",
+            () -> assertThat(createMethod.name).isEqualTo("create")),
+        dynamicTest(
+            "createMethod's modifiers are public only.",
+            () -> assertThat(createMethod.modifiers).containsOnly(Modifier.PUBLIC)),
+        dynamicTest(
+            "createMethod does not take any parameter",
+            () -> assertThat(createMethod.parameters).isEmpty()),
+        dynamicTest(
+            "createMethod returns Response<Void>",
+            () ->
+                assertThat(createMethod.returnType)
+                    .isEqualTo(
+                        ParameterizedTypeName.get(
+                            ClassName.get("com.example", "Response"), ClassName.get(Void.class)))),
+        dynamicTest(
+            "createMethod's body is not empty",
+            () -> assertThat(createMethod.code.isEmpty()).isFalse()),
+        dynamicTest(
+            "createMethod's body calls fooBarService.createNew()",
+            () ->
+                assertCode(createMethod.code)
+                    .contains("FooBarId fooBarId = ", "fooBarService.createNew()")),
+        dynamicTest(
+            "createMethod's body constructs String using String#formatted",
+            () ->
+                assertCode(createMethod.code)
+                    .contains(
+                        "String location = ",
+                        ".formatted(",
+                        "https://example.com/fooBar/%d",
+                        "fooBarId.value);")),
+        dynamicTest(
+            "createMethod's body returns a value created by Response.created(location)",
+            () ->
+                assertCode(createMethod.code).contains("return ", "Response.created(location);")));
+  }
+
+  private interface ContainsAssert<T> {
+    @SuppressWarnings("unchecked")
+    void contains(T... items);
+  }
+
+  private static ContainsAssert<String> assertCode(CodeBlock code) {
+    List<String> lines = code.toString().transform(codes -> Arrays.asList(codes.split("\\r?\\n")));
+    return items -> assertThat(lines).anySatisfy(line -> assertThat(line).contains(items));
   }
 
   @TestFactory
