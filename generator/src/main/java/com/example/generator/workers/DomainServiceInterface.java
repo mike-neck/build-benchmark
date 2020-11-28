@@ -24,7 +24,7 @@ import java.util.List;
 import javax.lang.model.element.Modifier;
 import org.jetbrains.annotations.NotNull;
 
-public class DomainServiceInterface implements DomainService {
+public final class DomainServiceInterface implements DomainService {
 
   private final Name name;
 

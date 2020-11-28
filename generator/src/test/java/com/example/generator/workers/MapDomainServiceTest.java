@@ -19,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
+import com.example.generator.JavaDefinition;
 import com.example.generator.LoggingApp;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;

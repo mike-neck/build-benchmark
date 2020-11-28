@@ -15,6 +15,7 @@
  */
 package com.example.generator.workers;
 
+import com.example.generator.JavaDefinition;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

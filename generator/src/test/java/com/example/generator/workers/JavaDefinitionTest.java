@@ -18,6 +18,7 @@ package com.example.generator.workers;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import com.example.generator.JavaDefinition;
 import com.squareup.javapoet.JavaFile;
 import java.nio.file.Path;
 import java.util.function.Function;

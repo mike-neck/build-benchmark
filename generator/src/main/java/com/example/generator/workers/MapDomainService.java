@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MapDomainService implements DomainService {
+public final class MapDomainService implements DomainService {
 
   private final Name name;
   private final Domain domain;

@@ -16,6 +16,7 @@
 package com.example.generator.workers;
 
 import com.example.generator.Interface;
+import com.example.generator.JavaDefinition;
 import com.example.generator.LoggingApp;
 import com.example.generator.Name;
 import java.lang.reflect.Constructor;

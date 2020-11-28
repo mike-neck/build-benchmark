@@ -15,6 +15,7 @@
  */
 package com.example.generator.workers;
 
+import com.example.generator.JavaDefinition;
 import com.example.generator.Name;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;

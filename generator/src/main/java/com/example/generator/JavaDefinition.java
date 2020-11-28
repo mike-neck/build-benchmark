@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.generator.workers;
+package com.example.generator;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;

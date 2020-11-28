@@ -16,6 +16,7 @@
 package com.example.generator.workers;
 
 import com.example.generator.Interface;
+import com.example.generator.JavaDefinition;
 import com.example.generator.LoggingApp;
 import com.example.generator.Name;
 import com.squareup.javapoet.ClassName;
@@ -28,7 +29,7 @@ import java.util.List;
 import javax.lang.model.element.Modifier;
 import org.jetbrains.annotations.NotNull;
 
-public class DomainController implements JavaDefinition {
+public final class DomainController implements JavaDefinition {
 
   private final Name name;
   private final Domain domain;
