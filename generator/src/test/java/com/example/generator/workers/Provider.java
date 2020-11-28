@@ -15,6 +15,7 @@
  */
 package com.example.generator.workers;
 
+import com.example.generator.Interface;
 import com.example.generator.LoggingApp;
 import com.example.generator.Name;
 import java.lang.reflect.Constructor;
@@ -66,10 +67,14 @@ public class Provider implements ParameterResolver {
             .orElseThrow(() -> new IllegalStateException("WithName is not annotated to method"));
     Optional<LoggingParam> loggingParam =
         testMethod.flatMap(method -> Optional.ofNullable(method.getAnnotation(LoggingParam.class)));
+    Optional<WithInterface> withInterface =
+        testMethod.flatMap(
+            method -> Optional.ofNullable(method.getAnnotation(WithInterface.class)));
     JavaDefinitionInitializer initializer =
         loggingParam
             .map(param -> loggingTypeInitializer(withName, param))
-            .orElseGet(() -> new NormalType(withName));
+            .or(() -> withInterface.map(wi -> withInterfaceInitializer(withName, wi)))
+            .orElseGet(() -> normalInitializer(withName));
     return initializer.initializeInstanceOf(testFor);
   }
 
@@ -77,45 +82,25 @@ public class Provider implements ParameterResolver {
     JavaDefinition initializeInstanceOf(TestFor testFor);
   }
 
-  static JavaDefinitionInitializer loggingTypeInitializer(
-      WithName withName, LoggingParam loggingParam) {
-    return new LoggingType(withName, loggingParam);
+  interface JavaDefinitionConstructor {
+    Constructor<? extends JavaDefinition> getConstructor(Class<? extends JavaDefinition> klass)
+        throws NoSuchMethodException, SecurityException;
   }
 
-  static class NormalType implements JavaDefinitionInitializer {
-
-    final WithName withName;
-
-    NormalType(WithName withName) {
-      this.withName = withName;
-    }
-
-    @Override
-    public JavaDefinition initializeInstanceOf(TestFor testFor) {
-      Class<? extends JavaDefinition> klass = testFor.value();
-      try {
-        Constructor<? extends JavaDefinition> constructor = klass.getConstructor(Name.class);
-        Name name = new Name(withName.value());
-        constructor.setAccessible(true);
-        return constructor.newInstance(name);
-      } catch (NoSuchMethodException
-          | IllegalAccessException
-          | InstantiationException
-          | InvocationTargetException e) {
-        throw new IllegalStateException(
-            "failed to initialize target class[%s]".formatted(klass.getSimpleName()), e);
-      }
-    }
+  interface NewInstance {
+    JavaDefinition createNewInstance(Constructor<? extends JavaDefinition> constructor)
+        throws InstantiationException, IllegalAccessException, IllegalArgumentException,
+            InvocationTargetException;
   }
 
-  static class LoggingType implements JavaDefinitionInitializer {
+  static class Init implements JavaDefinitionInitializer {
 
-    final WithName withName;
-    final LoggingParam loggingParam;
+    private final JavaDefinitionConstructor javaDefinitionConstructor;
+    private final NewInstance newInstance;
 
-    LoggingType(WithName withName, LoggingParam loggingParam) {
-      this.withName = withName;
-      this.loggingParam = loggingParam;
+    Init(JavaDefinitionConstructor javaDefinitionConstructor, NewInstance newInstance) {
+      this.javaDefinitionConstructor = javaDefinitionConstructor;
+      this.newInstance = newInstance;
     }
 
     @Override
@@ -123,17 +108,36 @@ public class Provider implements ParameterResolver {
       Class<? extends JavaDefinition> klass = testFor.value();
       try {
         Constructor<? extends JavaDefinition> constructor =
-            klass.getConstructor(Name.class, LoggingApp.class);
-        Name name = new Name(withName.value());
+            javaDefinitionConstructor.getConstructor(klass);
         constructor.setAccessible(true);
-        return constructor.newInstance(name, loggingParam.value());
+        return newInstance.createNewInstance(constructor);
       } catch (NoSuchMethodException
-          | IllegalAccessException
+          | InvocationTargetException
           | InstantiationException
-          | InvocationTargetException e) {
+          | IllegalAccessException e) {
         throw new IllegalStateException(
             "failed to initialize target class[%s]".formatted(klass.getSimpleName()), e);
       }
     }
+  }
+
+  static JavaDefinitionInitializer loggingTypeInitializer(
+      WithName withName, LoggingParam loggingParam) {
+    return new Init(
+        klass -> klass.getConstructor(Name.class, LoggingApp.class),
+        constructor -> constructor.newInstance(new Name(withName.value()), loggingParam.value()));
+  }
+
+  static JavaDefinitionInitializer withInterfaceInitializer(
+      WithName withName, WithInterface withInterface) {
+    return new Init(
+        klass -> klass.getConstructor(Name.class, Interface.class),
+        constructor -> constructor.newInstance(new Name(withName.value()), withInterface.value()));
+  }
+
+  static JavaDefinitionInitializer normalInitializer(WithName withName) {
+    return new Init(
+        klass -> klass.getConstructor(Name.class),
+        constructor -> constructor.newInstance(new Name(withName.value())));
   }
 }

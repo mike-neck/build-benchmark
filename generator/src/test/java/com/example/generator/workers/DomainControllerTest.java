@@ -18,6 +18,7 @@ package com.example.generator.workers;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
+import com.example.generator.Interface;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.FieldSpec;
@@ -42,36 +43,42 @@ class DomainControllerTest {
 
   @Test
   @WithName("fooBar")
+  @WithInterface(Interface.USE)
   void controller(DomainController controller) {
     assertThat(controller).isNotNull();
   }
 
   @Test
   @WithName("fooNar")
+  @WithInterface(Interface.USE)
   void javaNameFooNar(DomainController controller) {
     assertThat(controller.javaName()).isEqualTo("FooNarController");
   }
 
   @Test
   @WithName("fooBarBaz")
+  @WithInterface(Interface.USE)
   void javaNameFooBarBaz(DomainController controller) {
     assertThat(controller.javaName()).isEqualTo("FooBarBazController");
   }
 
   @Test
   @WithName("fooBar")
+  @WithInterface(Interface.USE)
   void fieldNameFooBar(DomainController controller) {
     assertThat(controller.fieldName()).isEqualTo("fooBarController");
   }
 
   @Test
   @WithName("fooBarBaz")
+  @WithInterface(Interface.USE)
   void fieldNameFooBarBaz(DomainController controller) {
     assertThat(controller.fieldName()).isEqualTo("fooBarBazController");
   }
 
   @TestFactory
   @WithName("nyaCat")
+  @WithInterface(Interface.USE)
   Iterable<DynamicTest> serviceField(DomainController controller) {
     FieldSpec service = controller.serviceField();
     return List.of(
@@ -93,16 +100,18 @@ class DomainControllerTest {
 
   @TestFactory
   @WithName("fooBar")
+  @WithInterface(Interface.NO)
   Iterable<DynamicTest> serviceFieldName(DomainController controller) {
     FieldSpec service = controller.serviceField();
     return List.of(
         dynamicTest(
-            "service field name is fooBarService",
-            () -> assertThat(service.name).isEqualTo("fooBarService")));
+            "service field name is mapFooBarService",
+            () -> assertThat(service.name).isEqualTo("mapFooBarService")));
   }
 
   @TestFactory
   @WithName("nyaCat")
+  @WithInterface(Interface.USE)
   Iterable<DynamicTest> constructor(DomainController controller) {
     MethodSpec constructor = controller.constructor();
     return List.of(
@@ -142,6 +151,7 @@ class DomainControllerTest {
 
   @TestFactory
   @WithName("fooBarBaz")
+  @WithInterface(Interface.NO)
   Iterable<DynamicTest> constructorBodies(DomainController controller) {
     MethodSpec constructor = controller.constructor();
     return List.of(
@@ -149,11 +159,12 @@ class DomainControllerTest {
             "constructor body has assignment",
             () ->
                 assertThat(constructor.code.toString())
-                    .contains("this.fooBarBazService = fooBarBazService")));
+                    .contains("this.mapFooBarBazService = mapFooBarBazService")));
   }
 
   @TestFactory
   @WithName("nyaCat")
+  @WithInterface(Interface.USE)
   Iterable<DynamicTest> getMethod(DomainController controller) {
     MethodSpec getMethod = controller.getMethod();
     return List.of(
@@ -199,6 +210,7 @@ class DomainControllerTest {
 
   @TestFactory
   @WithName("fooBar")
+  @WithInterface(Interface.USE)
   Iterable<DynamicTest> createMethod(DomainController controller) {
     MethodSpec createMethod = controller.createMethod();
     return List.of(
@@ -257,6 +269,7 @@ class DomainControllerTest {
 
   @TestFactory
   @WithName("nyaCat")
+  @WithInterface(Interface.USE)
   Iterable<DynamicTest> typeSpec(DomainController controller) {
     TypeSpec typeSpec = controller.typeSpec();
     return List.of(
@@ -275,6 +288,7 @@ class DomainControllerTest {
 
   @TestFactory
   @WithName("nyaCat")
+  @WithInterface(Interface.USE)
   Iterable<DynamicTest> create(DomainController controller) {
     JavaFile javaFile = controller.create();
     return List.of(

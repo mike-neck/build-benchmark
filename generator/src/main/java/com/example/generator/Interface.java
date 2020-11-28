@@ -15,12 +15,38 @@
  */
 package com.example.generator;
 
+import java.util.Optional;
+import java.util.function.Supplier;
+import org.jetbrains.annotations.NotNull;
+
 public enum Interface {
-  WITH,
-  WITHOUT,
+  USE("with") {
+    @Override
+    public <T> @NotNull Optional<T> ifWithoutInterface(
+        @NotNull Supplier<@NotNull ? extends T> object) {
+      return Optional.empty();
+    }
+  },
+  NO("without") {
+    @Override
+    public <T> @NotNull Optional<T> ifWithoutInterface(
+        @NotNull Supplier<@NotNull ? extends T> object) {
+      return Optional.of(object.get());
+    }
+  },
   ;
 
-  public String projectName() {
-    return "%s-interface".formatted(name().toLowerCase());
+  private final String withInterface;
+
+  Interface(String withInterface) {
+    this.withInterface = withInterface;
   }
+
+  public String projectName() {
+    return "%s-interface".formatted(withInterface);
+  }
+
+  @NotNull
+  public abstract <T> Optional<T> ifWithoutInterface(
+      @NotNull Supplier<@NotNull ? extends T> object);
 }

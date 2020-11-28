@@ -15,6 +15,8 @@
  */
 package com.example.generator.workers;
 
+import com.example.generator.Interface;
+import com.example.generator.LoggingApp;
 import com.example.generator.Name;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
@@ -33,11 +35,13 @@ public class DomainController implements JavaDefinition {
   private final DomainId domainId;
   private final DomainService domainService;
 
-  public DomainController(Name name) {
+  public DomainController(@NotNull Name name, @NotNull Interface inf) {
     this.name = name;
     this.domain = new Domain(name);
     this.domainId = new DomainId(name);
-    this.domainService = new DomainServiceInterface(name);
+    this.domainService =
+        inf.<DomainService>ifWithoutInterface(() -> new MapDomainService(name, LoggingApp.LOGGING))
+            .orElseGet(() -> new DomainServiceInterface(name));
   }
 
   @Override
