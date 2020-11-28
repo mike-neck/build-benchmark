@@ -16,7 +16,6 @@
 package com.example.generator.workers;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assumptions.assumeThat;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 import com.squareup.javapoet.ClassName;
@@ -277,6 +276,18 @@ class DomainControllerTest {
   @TestFactory
   @WithName("nyaCat")
   Iterable<DynamicTest> create(DomainController controller) {
-    return List.of(dynamicTest("create", () -> assumeThat(1).isEqualTo(2)));
+    JavaFile javaFile = controller.create();
+    return List.of(
+        dynamicTest("javaFile is not null", () -> assertThat(javaFile).isNotNull()),
+        dynamicTest(
+            "javaFile has package [%s]".formatted(JavaDefinition.packageName),
+            () -> assertThat(javaFile.packageName).isEqualTo(JavaDefinition.packageName)),
+        dynamicTest(
+            "javaFile",
+            () -> {
+              StringBuilder builder = new StringBuilder();
+              javaFile.writeTo(builder);
+              System.out.println(builder);
+            }));
   }
 }

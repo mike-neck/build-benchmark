@@ -52,7 +52,7 @@ public class DomainController implements JavaDefinition {
 
   @Override
   public @NotNull JavaFile create() {
-    return null;
+    return JavaFile.builder(packageName, typeSpec()).build();
   }
 
   @NotNull
