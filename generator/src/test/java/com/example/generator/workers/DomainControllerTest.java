@@ -22,9 +22,11 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.FieldSpec;
+import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeSpec;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -252,6 +254,24 @@ class DomainControllerTest {
   private static ContainsAssert<String> assertCode(CodeBlock code) {
     List<String> lines = code.toString().transform(codes -> Arrays.asList(codes.split("\\r?\\n")));
     return items -> assertThat(lines).anySatisfy(line -> assertThat(line).contains(items));
+  }
+
+  @TestFactory
+  @WithName("nyaCat")
+  Iterable<DynamicTest> typeSpec(DomainController controller) {
+    TypeSpec typeSpec = controller.typeSpec();
+    return List.of(
+        dynamicTest("typeSpec is not null", () -> assertThat(typeSpec).isNotNull()),
+        dynamicTest(
+            "typeSpec's type is NyaCatController",
+            () -> assertThat(typeSpec.name).isEqualTo("NyaCatController")),
+        dynamicTest(
+            "typeSpec's modifiers are public",
+            () -> assertThat(typeSpec.modifiers).containsOnly(Modifier.PUBLIC)),
+        dynamicTest("typeSpec has a field", () -> assertThat(typeSpec.fieldSpecs).hasSize(1)),
+        dynamicTest(
+            "typeSpec has a constructor and 2 methods",
+            () -> assertThat(typeSpec.methodSpecs).hasSize(3)));
   }
 
   @TestFactory

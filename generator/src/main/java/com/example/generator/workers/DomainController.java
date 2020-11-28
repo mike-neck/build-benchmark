@@ -21,6 +21,8 @@ import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeSpec;
+import java.util.List;
 import javax.lang.model.element.Modifier;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,6 +53,15 @@ public class DomainController implements JavaDefinition {
   @Override
   public @NotNull JavaFile create() {
     return null;
+  }
+
+  @NotNull
+  TypeSpec typeSpec() {
+    return TypeSpec.classBuilder(ClassName.get(packageName, javaName()))
+        .addModifiers(Modifier.PUBLIC)
+        .addField(serviceField())
+        .addMethods(List.of(constructor(), getMethod(), createMethod()))
+        .build();
   }
 
   public FieldSpec serviceField() {
