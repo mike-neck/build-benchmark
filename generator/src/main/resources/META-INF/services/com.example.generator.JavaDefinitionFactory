@@ -1,0 +1,5 @@
+com.example.generator.workers.DomainControllerFactory
+com.example.generator.workers.DomainFactory
+com.example.generator.workers.DomainIdFactory
+com.example.generator.workers.DomainServiceInterfaceFactory
+com.example.generator.workers.MapDomainServiceFactory
