@@ -15,30 +15,13 @@
  */
 package com.example.generator;
 
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.JavaFile;
-import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.TypeSpec;
-import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import javax.lang.model.element.Modifier;
 
 public class Generator {
 
-  private static Type type(Supplier<? extends String> typeName) {
-    return new Type() {
-      @Override
-      public String toString() {
-        return typeName.get();
-      }
-    };
-  }
-
-  public static void main(String[] args) throws IOException {
+  public static void main(String[] args) {
     System.out.println(
         Arrays.stream(args)
             .map(LoggingApp::fromStringOptionally)
@@ -48,18 +31,5 @@ public class Generator {
             .collect(Collectors.joining(",")));
     Domains domains = Domains.load();
     System.out.println(domains);
-    MethodSpec interfaceMethod =
-        MethodSpec.methodBuilder("findById")
-            .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
-            .addParameter(ClassName.get("com.example", "UserId"), "userId", Modifier.FINAL)
-            .returns(ClassName.get("com.example", "User"))
-            .build();
-    TypeSpec userService =
-        TypeSpec.interfaceBuilder(ClassName.get("com.example", "UserService"))
-            .addMethod(interfaceMethod)
-            .addModifiers(Modifier.PUBLIC)
-            .build();
-    JavaFile userServiceJava = JavaFile.builder("com.example", userService).build();
-    userServiceJava.writeTo(System.out);
   }
 }
