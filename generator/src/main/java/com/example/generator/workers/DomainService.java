@@ -15,59 +15,30 @@
  */
 package com.example.generator.workers;
 
-import com.example.generator.Name;
-import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
-import java.util.List;
-import javax.lang.model.element.Modifier;
 import org.jetbrains.annotations.NotNull;
 
-public class DomainService implements JavaDefinition {
-
-  private final Name name;
-
-  public DomainService(Name name) {
-    this.name = name;
-  }
+public interface DomainService extends JavaDefinition {
+  @Override
+  @NotNull
+  String javaName();
 
   @Override
-  public @NotNull String javaName() {
-    return "%sService".formatted(name.typeName());
-  }
+  @NotNull
+  String fieldName();
 
   @Override
-  public @NotNull String fieldName() {
-    return "%sService".formatted(name.fieldName());
-  }
+  @NotNull
+  JavaFile create();
 
-  @Override
-  public @NotNull JavaFile create() {
-    return JavaFile.builder(packageName, typeDefinition()).build();
-  }
+  @NotNull
+  MethodSpec findById();
 
-  MethodSpec findById() {
-    return MethodSpec.methodBuilder("findById")
-        .returns(ClassName.get(packageName, name.typeName()))
-        .addParameter(
-            ClassName.get(packageName, "%sId".formatted(name.typeName())),
-            "%sId".formatted(name.fieldName()))
-        .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
-        .build();
-  }
+  @NotNull
+  MethodSpec createNew();
 
-  MethodSpec createNew() {
-    return MethodSpec.methodBuilder("createNew")
-        .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
-        .returns(ClassName.get(packageName, "%sId".formatted(name.typeName())))
-        .build();
-  }
-
-  TypeSpec typeDefinition() {
-    return TypeSpec.interfaceBuilder(type())
-        .addModifiers(Modifier.PUBLIC)
-        .addMethods(List.of(findById(), createNew()))
-        .build();
-  }
+  @NotNull
+  TypeSpec typeDefinition();
 }

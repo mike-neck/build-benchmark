@@ -37,7 +37,7 @@ public class DomainController implements JavaDefinition {
     this.name = name;
     this.domain = new Domain(name);
     this.domainId = new DomainId(name);
-    this.domainService = new DomainService(name);
+    this.domainService = new DomainServiceInterface(name);
   }
 
   @Override

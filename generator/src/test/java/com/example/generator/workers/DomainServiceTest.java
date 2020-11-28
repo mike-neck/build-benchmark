@@ -30,37 +30,37 @@ import org.assertj.core.data.Index;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-@TestFor(DomainService.class)
+@TestFor(DomainServiceInterface.class)
 @ExtendWith(Provider.class)
 class DomainServiceTest {
 
   @WithName("fooBar")
   @Test
-  void javaName(DomainService domainService) {
+  void javaName(DomainServiceInterface domainService) {
     assertThat(domainService.javaName()).isEqualTo("FooBarService");
   }
 
   @WithName("fooBarBaz")
   @Test
-  void javaName2(DomainService domainService) {
+  void javaName2(DomainServiceInterface domainService) {
     assertThat(domainService.javaName()).isEqualTo("FooBarBazService");
   }
 
   @WithName("fooBar")
   @Test
-  void fieldName(DomainService domainService) {
+  void fieldName(DomainServiceInterface domainService) {
     assertThat(domainService.fieldName()).isEqualTo("fooBarService");
   }
 
   @WithName("fooBarBaz")
   @Test
-  void fieldName2(DomainService domainService) {
+  void fieldName2(DomainServiceInterface domainService) {
     assertThat(domainService.fieldName()).isEqualTo("fooBarBazService");
   }
 
   @WithName("fooBarBaz")
   @Test
-  void findByIdMethod(DomainService domainService) {
+  void findByIdMethod(DomainServiceInterface domainService) {
     MethodSpec findById = domainService.findById();
     assertAll(
         () -> assertThat(findById).isNotNull(),
@@ -91,7 +91,7 @@ class DomainServiceTest {
 
   @WithName("fooBar")
   @Test
-  void createNew(DomainService domainService) {
+  void createNew(DomainServiceInterface domainService) {
     MethodSpec createNew = domainService.createNew();
     assertAll(
         () -> assertThat(createNew).isNotNull(),
@@ -106,7 +106,7 @@ class DomainServiceTest {
 
   @WithName("fooBar")
   @Test
-  void typeDef(DomainService domainService) {
+  void typeDef(DomainServiceInterface domainService) {
     TypeSpec service = domainService.typeDefinition();
     assertAll(
         () -> assertThat(service).isNotNull(),
@@ -122,7 +122,7 @@ class DomainServiceTest {
 
   @WithName("barBaz")
   @Test
-  void create(DomainService domainService) {
+  void create(DomainServiceInterface domainService) {
     JavaFile javaFile = domainService.create();
     assertAll(
         () -> assertThat(javaFile).isNotNull(),

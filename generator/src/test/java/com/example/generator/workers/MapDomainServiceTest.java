@@ -149,7 +149,7 @@ class MapDomainServiceTest {
   @WithName("fooBar")
   @LoggingParam(LoggingApp.NO_LOGGING)
   void findByIdWithoutLogging(MapDomainService service) {
-    MethodSpec findById = service.findByIdMethod();
+    MethodSpec findById = service.findById();
     assertAll(
         () -> assertThat(findById).isNotNull(),
         () -> assertThat(findById.name).isEqualTo("findById"),
@@ -197,7 +197,7 @@ class MapDomainServiceTest {
   @WithName("fooBar")
   @LoggingParam(LoggingApp.LOGGING)
   void findById(MapDomainService service) {
-    MethodSpec findById = service.findByIdMethod();
+    MethodSpec findById = service.findById();
     assertAll(
         () -> assertThat(findById).isNotNull(),
         () -> assertThat(findById.name).isEqualTo("findById"),
@@ -225,7 +225,7 @@ class MapDomainServiceTest {
   @WithName("fooBar")
   @LoggingParam(LoggingApp.NO_LOGGING)
   Iterable<DynamicTest> createNewWithoutLogging(MapDomainService service) {
-    MethodSpec createNew = service.createNewMethod();
+    MethodSpec createNew = service.createNew();
     return List.of(
         dynamicTest("createNew is not null", () -> assertThat(createNew).isNotNull()),
         dynamicTest(
@@ -278,7 +278,7 @@ class MapDomainServiceTest {
   @WithName("fooBar")
   @LoggingParam(LoggingApp.LOGGING)
   void createNew(MapDomainService service) {
-    MethodSpec createNew = service.createNewMethod();
+    MethodSpec createNew = service.createNew();
     assertThat(createNew.code.toString()).contains("logger");
   }
 

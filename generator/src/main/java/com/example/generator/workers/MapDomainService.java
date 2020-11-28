@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MapDomainService implements JavaDefinition {
+public class MapDomainService implements DomainService {
 
   private final Name name;
   private final Domain domain;
@@ -43,7 +43,7 @@ public class MapDomainService implements JavaDefinition {
     this.name = name;
     this.domain = new Domain(name);
     this.domainId = new DomainId(name);
-    this.domainService = new DomainService(name);
+    this.domainService = new DomainServiceInterface(name);
     this.loggingApp = loggingApp;
   }
 
@@ -59,14 +59,19 @@ public class MapDomainService implements JavaDefinition {
 
   @Override
   public @NotNull JavaFile create() {
-    TypeSpec typeSpec =
-        TypeSpec.classBuilder(type())
-            .superclass(domainService.type())
-            .addModifiers(Modifier.PUBLIC)
-            .addMethods(List.of(createNewMethod(), findByIdMethod()))
-            .addFields(List.of(loggerField(), mapField(), idGeneratorField()))
-            .build();
+    TypeSpec typeSpec = typeDefinition();
     return JavaFile.builder(packageName, typeSpec).build();
+  }
+
+  @Override
+  @NotNull
+  public TypeSpec typeDefinition() {
+    return TypeSpec.classBuilder(type())
+        .superclass(domainService.type())
+        .addModifiers(Modifier.PUBLIC)
+        .addMethods(List.of(createNew(), findById()))
+        .addFields(List.of(loggerField(), mapField(), idGeneratorField()))
+        .build();
   }
 
   FieldSpec loggerField() {
@@ -92,8 +97,9 @@ public class MapDomainService implements JavaDefinition {
         .build();
   }
 
+  @Override
   @NotNull
-  MethodSpec findByIdMethod() {
+  public MethodSpec findById() {
     String methodName = "findById";
     return MethodSpec.methodBuilder(methodName)
         .addModifiers(Modifier.PUBLIC)
@@ -107,7 +113,9 @@ public class MapDomainService implements JavaDefinition {
         .build();
   }
 
-  MethodSpec createNewMethod() {
+  @Override
+  @NotNull
+  public MethodSpec createNew() {
     String methodName = "createNew";
     return MethodSpec.methodBuilder(methodName)
         .addModifiers(Modifier.PUBLIC)
