@@ -43,8 +43,8 @@ tasks.withType(JavaExec) {
 
       it.mainClass.set('com.example.generator.Generator')
       it.classpath(configurations.runtimeClasspath, sourceSets.main.output)
-      it.outputs.dir(rootProject.file("with-interface/src/main/java"))
-      it.args = [loggingApp]
+      it.outputs.dir(rootProject.file("${targetProject}/src/main/java"))
+      it.args = [loggingApp, targetProject]
     }
   }
 }
