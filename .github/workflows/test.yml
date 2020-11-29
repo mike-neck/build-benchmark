@@ -1,0 +1,38 @@
+name: "Test"
+on:
+  push: {}
+  workflow_dispatch: {}
+
+jobs:
+  run-tests:
+    strategy:
+      matrix:
+        interface:
+          - with
+          - without
+    name: "Test ${{ matrix.interface }}-interface"
+    runs-on: ubuntu-20.04
+    steps:
+      - name: setup Java
+        uses: actions/setup-java@v1.4.3
+        with:
+          java-version: '11'
+
+      - uses: actions/checkout@v2
+        name: checkout
+
+      - name: Cache gradle
+        id: gradle
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: gradle-${{ hashFiles('**/*.gradle') }}-${{ hashFiles('**/gradle-wrapper.properties') }}
+          restore-keys: gradle-
+
+      - name: Test before test
+        run: |
+          ./gradlew :generator:test
+
+      - name: Main test
+        run: "./test-${{ matrix.interface }}-inf.sh"
+    
