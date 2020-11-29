@@ -15,6 +15,7 @@
  */
 package com.example.generator;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Supplier;
 import org.jetbrains.annotations.NotNull;
@@ -40,6 +41,13 @@ public enum Interface {
 
   Interface(String withInterface) {
     this.withInterface = withInterface;
+  }
+
+  @NotNull
+  static Optional<@NotNull Interface> fromString(@NotNull String arg) {
+    int index = arg.indexOf('-');
+    String param = index <= 0 ? arg.toLowerCase() : arg.substring(0, index).toLowerCase();
+    return Arrays.stream(values()).filter(inf -> inf.withInterface.equals(param)).findFirst();
   }
 
   public String projectName() {

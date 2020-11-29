@@ -18,6 +18,7 @@ package com.example.generator;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.function.Function;
@@ -44,7 +45,27 @@ public interface JavaDefinition {
   default void writeTo(@NotNull Path rootPath) throws IOException {
     JavaFile javaFile = create();
     Function<Path, Path> toJavaPath = pathEditor();
-    javaFile.writeTo(toJavaPath.apply(rootPath));
+    Path file = toJavaPath.apply(rootPath);
+    Path dir = file.getParent();
+    if (!Files.exists(dir)) {
+      tryIo(
+          "failed to create parent directory of [%s]".formatted(file),
+          () -> Files.createDirectories(dir));
+    }
+    tryIo("failed to write file[%s]".formatted(file), () -> javaFile.writeTo(file));
+  }
+
+  @FunctionalInterface
+  interface IO {
+    void act() throws IOException;
+  }
+
+  private static void tryIo(String title, IO io) throws IOException {
+    try {
+      io.act();
+    } catch (IOException e) {
+      throw new IOException(title, e);
+    }
   }
 
   @NotNull

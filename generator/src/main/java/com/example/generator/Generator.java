@@ -15,21 +15,76 @@
  */
 package com.example.generator;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+import org.jetbrains.annotations.NotNull;
 
 public class Generator {
 
+  @NotNull private final Interface inf;
+  @NotNull private final JavaDefinition javaDefinition;
+
+  Generator(@NotNull Interface inf, @NotNull JavaDefinition javaDefinition) {
+    this.inf = inf;
+    this.javaDefinition = javaDefinition;
+  }
+
+  Path filePath() {
+    return Path.of(inf.projectName(), "src", "main", "java");
+  }
+
+  void write() {
+    Path root = filePath();
+    System.out.printf("writing %s%n", javaDefinition);
+    try {
+      javaDefinition.writeTo(root);
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
+  private static LoggingApp loggingApp(String[] args) {
+    return Arrays.stream(args)
+        .map(LoggingApp::fromStringOptionally)
+        .filter(Optional::isPresent)
+        .map(Optional::get)
+        .findFirst()
+        .orElse(LoggingApp.NO_LOGGING);
+  }
+
+  private static Interface inf(String[] args) {
+    return Arrays.stream(args)
+        .map(Interface::fromString)
+        .filter(Optional::isPresent)
+        .map(Optional::get)
+        .findFirst()
+        .orElse(Interface.USE);
+  }
+
+  private static Iterable<Generator> newGenerators(
+      @NotNull Interface inf, @NotNull LoggingApp logging, @NotNull Domains domains) {
+    return StreamSupport.stream(domains.spliterator(), false)
+        .flatMap(
+            name ->
+                StreamSupport.stream(JavaDefinitionFactory.factories().spliterator(), false)
+                    .map(factory -> factory.create(name, logging, inf)))
+        .map(def -> new Generator(inf, def))
+        .collect(Collectors.toUnmodifiableList());
+  }
+
   public static void main(String[] args) {
-    System.out.println(
-        Arrays.stream(args)
-            .map(LoggingApp::fromStringOptionally)
-            .filter(Optional::isPresent)
-            .map(Optional::get)
-            .map(log -> log.loggingCode("main").toString())
-            .collect(Collectors.joining(",")));
+    LoggingApp logging = loggingApp(args);
+    Interface inf = inf(args);
+
     Domains domains = Domains.load();
-    System.out.println(domains);
+    Iterable<Generator> generators = newGenerators(inf, logging, domains);
+    for (Generator generator : generators) {
+      generator.write();
+    }
   }
 }

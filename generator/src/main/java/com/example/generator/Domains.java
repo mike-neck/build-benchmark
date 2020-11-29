@@ -15,6 +15,11 @@
  */
 package com.example.generator;
 
+import com.example.generator.workers.Domain;
+import com.example.generator.workers.DomainController;
+import com.example.generator.workers.DomainId;
+import com.example.generator.workers.DomainServiceInterface;
+import com.example.generator.workers.MapDomainService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import java.io.IOException;
@@ -22,13 +27,15 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class Domains {
+public class Domains implements Iterable<Name> {
 
   @NotNull
   static Domains load() {
@@ -67,6 +74,22 @@ public class Domains {
     this.domains = domains;
   }
 
+  @NotNull
+  Iterable<List<JavaDefinition>> allJavaDefinitions(
+      @NotNull LoggingApp loggingApp, @NotNull Interface inf) {
+    return domains.stream()
+        .map(Name::new)
+        .map(
+            name ->
+                List.of(
+                    new DomainId(name),
+                    new Domain(name),
+                    new DomainServiceInterface(name),
+                    new MapDomainService(name, loggingApp),
+                    new DomainController(name, inf)))
+        .collect(Collectors.toUnmodifiableList());
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -84,5 +107,11 @@ public class Domains {
     return new StringJoiner(", ", Domains.class.getSimpleName() + "[", "]")
         .add("domains=" + domains)
         .toString();
+  }
+
+  @NotNull
+  @Override
+  public Iterator<Name> iterator() {
+    return domains.stream().map(Name::new).iterator();
   }
 }
