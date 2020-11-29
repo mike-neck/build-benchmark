@@ -31,3 +31,4 @@ build
 
 with-interface/src/main/java/
 without-interface/src/main/java/
+!gradle/wrapper/gradle-wrapper.jar
