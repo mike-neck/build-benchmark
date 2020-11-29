@@ -72,9 +72,9 @@ public final class MapDomainService implements DomainService {
   @NotNull
   public TypeSpec typeDefinition() {
     return TypeSpec.classBuilder(type())
-        .superclass(domainService.type())
+        .addSuperinterface(domainService.type())
         .addModifiers(Modifier.PUBLIC)
-        .addMethods(List.of(createNew(), findById()))
+        .addMethods(List.of(createNew(), findById(), constructor()))
         .addFields(List.of(loggerField(), mapField(), idGeneratorField()))
         .build();
   }

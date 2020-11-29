@@ -329,16 +329,16 @@ class MapDomainServiceTest {
         () -> assertThat(javaFile).isNotNull(),
         () -> assertThat(typeSpec.name).isEqualTo("MapFooBarService"),
         () ->
-            assertThat(typeSpec.superclass)
-                .isEqualTo(ClassName.get(JavaDefinition.packageName, "FooBarService")),
+            assertThat(typeSpec.superinterfaces)
+                .contains(ClassName.get(JavaDefinition.packageName, "FooBarService")),
         () -> assertThat(javaFile.packageName).isEqualTo(JavaDefinition.packageName),
         () -> assertThat(typeSpec.modifiers).contains(Modifier.PUBLIC),
         () -> assertThat(typeSpec.kind).isEqualTo(TypeSpec.Kind.CLASS),
         () ->
             assertThat(typeSpec.methodSpecs)
-                .hasSize(2)
+                .hasSize(3)
                 .extracting(methodSpec -> methodSpec.name)
-                .contains("createNew", "findById"),
+                .contains("createNew", "<init>", "findById"),
         () ->
             assertThat(typeSpec.fieldSpecs)
                 .hasSize(3)
