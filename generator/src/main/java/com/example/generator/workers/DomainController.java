@@ -46,6 +46,11 @@ public final class DomainController implements JavaDefinition {
   }
 
   @Override
+  public String toString() {
+    return javaName();
+  }
+
+  @Override
   public @NotNull String javaName() {
     return "%sController".formatted(name.typeName());
   }

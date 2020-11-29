@@ -36,6 +36,11 @@ public final class Domain implements JavaDefinition {
   }
 
   @Override
+  public String toString() {
+    return javaName();
+  }
+
+  @Override
   public @NotNull String javaName() {
     return name.typeName();
   }

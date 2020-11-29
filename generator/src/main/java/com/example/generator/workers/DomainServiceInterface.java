@@ -33,6 +33,11 @@ public final class DomainServiceInterface implements DomainService {
   }
 
   @Override
+  public String toString() {
+    return javaName();
+  }
+
+  @Override
   public @NotNull String javaName() {
     return "%sService".formatted(name.typeName());
   }

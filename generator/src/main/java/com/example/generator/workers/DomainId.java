@@ -36,6 +36,11 @@ public final class DomainId implements JavaDefinition {
     this.name = name;
   }
 
+  @Override
+  public String toString() {
+    return javaName();
+  }
+
   @NotNull
   @Override
   public String javaName() {

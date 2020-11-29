@@ -48,6 +48,11 @@ public final class MapDomainService implements DomainService {
   }
 
   @Override
+  public String toString() {
+    return javaName();
+  }
+
+  @Override
   public @NotNull String javaName() {
     return "Map%sService".formatted(name.typeName());
   }
