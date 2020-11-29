@@ -44,15 +44,7 @@ public interface JavaDefinition {
 
   default void writeTo(@NotNull Path rootPath) throws IOException {
     JavaFile javaFile = create();
-    Function<Path, Path> toJavaPath = pathEditor();
-    Path file = toJavaPath.apply(rootPath);
-    Path dir = file.getParent();
-    if (!Files.exists(dir)) {
-      tryIo(
-          "failed to create parent directory of [%s]".formatted(file),
-          () -> Files.createDirectories(dir));
-    }
-    tryIo("failed to write file[%s]".formatted(file), () -> javaFile.writeTo(file));
+    tryIo("failed to write file[%s]".formatted(this), () -> javaFile.writeTo(rootPath));
   }
 
   @FunctionalInterface
