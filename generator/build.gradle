@@ -41,6 +41,7 @@ tasks.withType(JavaExec) {
     javaExecTask.configure { JavaExec it ->
       it.group('Code-Generation')
 
+      it.workingDir = rootProject.projectDir
       it.mainClass.set('com.example.generator.Generator')
       it.classpath(configurations.runtimeClasspath, sourceSets.main.output)
       it.outputs.dir(rootProject.file("${targetProject}/src/main/java"))
