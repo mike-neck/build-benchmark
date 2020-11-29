@@ -22,8 +22,9 @@ import com.example.generator.TypedJavaDefinitionFactory;
 import org.jetbrains.annotations.NotNull;
 
 public class DomainFactory implements TypedJavaDefinitionFactory<Domain> {
-    @Override
-    public @NotNull Domain create(@NotNull Name name, @NotNull LoggingApp logging, @NotNull Interface inf) {
-        return new Domain(name);
-    }
+  @Override
+  public @NotNull Domain create(
+      @NotNull Name name, @NotNull LoggingApp logging, @NotNull Interface inf) {
+    return new Domain(name);
+  }
 }

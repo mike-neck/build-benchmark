@@ -20,10 +20,10 @@ import org.jetbrains.annotations.NotNull;
 
 public interface JavaDefinitionFactory {
 
-    @NotNull
-    JavaDefinition create(@NotNull Name name, @NotNull LoggingApp logging, @NotNull Interface inf);
+  @NotNull
+  JavaDefinition create(@NotNull Name name, @NotNull LoggingApp logging, @NotNull Interface inf);
 
-    static Iterable<JavaDefinitionFactory> factories() {
-        return ServiceLoader.load(JavaDefinitionFactory.class);
-    }
+  static Iterable<JavaDefinitionFactory> factories() {
+    return ServiceLoader.load(JavaDefinitionFactory.class);
+  }
 }

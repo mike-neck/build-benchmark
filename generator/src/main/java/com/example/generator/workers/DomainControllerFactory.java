@@ -22,8 +22,9 @@ import com.example.generator.TypedJavaDefinitionFactory;
 import org.jetbrains.annotations.NotNull;
 
 public class DomainControllerFactory implements TypedJavaDefinitionFactory<DomainController> {
-    @Override
-    public @NotNull DomainController create(@NotNull Name name, @NotNull LoggingApp logging, @NotNull Interface inf) {
-        return new DomainController(name, inf);
-    }
+  @Override
+  public @NotNull DomainController create(
+      @NotNull Name name, @NotNull LoggingApp logging, @NotNull Interface inf) {
+    return new DomainController(name, inf);
+  }
 }

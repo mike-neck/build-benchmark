@@ -21,9 +21,11 @@ import com.example.generator.Name;
 import com.example.generator.TypedJavaDefinitionFactory;
 import org.jetbrains.annotations.NotNull;
 
-public class DomainServiceInterfaceFactory implements TypedJavaDefinitionFactory<DomainServiceInterface> {
-    @Override
-    public @NotNull DomainServiceInterface create(@NotNull Name name, @NotNull LoggingApp logging, @NotNull Interface inf) {
-        return new DomainServiceInterface(name);
-    }
+public class DomainServiceInterfaceFactory
+    implements TypedJavaDefinitionFactory<DomainServiceInterface> {
+  @Override
+  public @NotNull DomainServiceInterface create(
+      @NotNull Name name, @NotNull LoggingApp logging, @NotNull Interface inf) {
+    return new DomainServiceInterface(name);
+  }
 }

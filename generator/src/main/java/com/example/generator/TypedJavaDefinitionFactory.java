@@ -17,8 +17,10 @@ package com.example.generator;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface TypedJavaDefinitionFactory<T extends JavaDefinition> extends JavaDefinitionFactory {
+public interface TypedJavaDefinitionFactory<T extends JavaDefinition>
+    extends JavaDefinitionFactory {
 
-    @Override
-    @NotNull T create(@NotNull Name name, @NotNull LoggingApp logging, @NotNull Interface inf);
+  @Override
+  @NotNull
+  T create(@NotNull Name name, @NotNull LoggingApp logging, @NotNull Interface inf);
 }

@@ -22,8 +22,9 @@ import com.example.generator.TypedJavaDefinitionFactory;
 import org.jetbrains.annotations.NotNull;
 
 public class MapDomainServiceFactory implements TypedJavaDefinitionFactory<MapDomainService> {
-    @Override
-    public @NotNull MapDomainService create(@NotNull Name name, @NotNull LoggingApp logging, @NotNull Interface inf) {
-        return new MapDomainService(name, logging);
-    }
+  @Override
+  public @NotNull MapDomainService create(
+      @NotNull Name name, @NotNull LoggingApp logging, @NotNull Interface inf) {
+    return new MapDomainService(name, logging);
+  }
 }
