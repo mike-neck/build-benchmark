@@ -46,6 +46,7 @@ tasks.withType(JavaExec) {
       it.classpath(configurations.runtimeClasspath, sourceSets.main.output)
       it.outputs.dir(rootProject.file("${targetProject}/src/main/java"))
       it.args = [loggingApp, targetProject]
+      it.environment('LOG', 'size')
     }
   }
 }

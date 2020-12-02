@@ -38,11 +38,11 @@ public class Generator {
     return Path.of(inf.projectName(), "src", "main", "java");
   }
 
-  void write() {
+  String write() {
     Path root = filePath();
-    System.out.printf("writing %s%n", javaDefinition);
     try {
       javaDefinition.writeTo(root);
+      return "wrote %s".formatted(javaDefinition);
     } catch (IOException e) {
       throw new UncheckedIOException(e);
     }
@@ -80,11 +80,10 @@ public class Generator {
   public static void main(String[] args) {
     LoggingApp logging = loggingApp(args);
     Interface inf = inf(args);
+    GeneratorLog generatorLog = GeneratorLog.fromEnvironment();
 
     Domains domains = Domains.load();
     Iterable<Generator> generators = newGenerators(inf, logging, domains);
-    for (Generator generator : generators) {
-      generator.write();
-    }
+    generatorLog.iterate(generators, Generator::write);
   }
 }
