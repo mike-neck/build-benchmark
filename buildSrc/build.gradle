@@ -11,5 +11,7 @@ repositories {
 }
 
 dependencies {
+    implementation gradleApi()
+    implementation localGroovy()
     implementation "com.diffplug.spotless:spotless-plugin-gradle:5.8.2"
 }

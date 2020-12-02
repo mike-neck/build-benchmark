@@ -49,3 +49,8 @@ tasks.withType(JavaExec) {
     }
   }
 }
+
+task generateDomainsYaml(type: RandomWordsGenerateTask, group: 'build') {
+  size.set(1000)
+  outputFile.set(file('src/main/resources/domains-2.yml'))
+}
