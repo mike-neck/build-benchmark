@@ -23,7 +23,7 @@ class RandomWordsGenerateTask extends DefaultTask {
     @TaskAction
     void run() {
         int size = this.size.get()
-        if (size < 20 || 1_000 < size) {
+        if (size < 20 || 100_000 < size) {
             throw new InvalidUserDataException("invalid size($size), size should be between 20 and 1000")
         }
         def file = this.outputFile.get().asFile
