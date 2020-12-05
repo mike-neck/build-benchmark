@@ -43,7 +43,8 @@ jobs:
           echo "build cache : ${{ steps.build-cache.outputs.cache-hit }}"
 
       - name: Create Build Cache directory manually
-        run: mkdir .cache
+        run: |
+          [[ -d .cache ]] || mkdir .cache
 
       - name: Test before test
         env:
