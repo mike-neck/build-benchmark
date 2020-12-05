@@ -1,0 +1,7 @@
+2020-12-05T07:20:10.4010327Z :without-interface:compileJava (Thread[Daemon worker,5,main]) completed. Took 19.617 secs.
+2020-12-05T07:21:57.7249236Z :without-interface:compileJava (Thread[Execution worker for ':',5,main]) completed. Took 1 mins 38.709 secs.
+2020-12-05T07:23:12.2295774Z :without-interface:compileJava (Thread[Execution worker for ':',5,main]) completed. Took 1 mins 5.358 secs.
+2020-12-05T07:24:26.8300245Z :without-interface:compileJava (Thread[Daemon worker,5,main]) completed. Took 1 mins 6.199 secs.
+2020-12-05T07:25:40.9873748Z :without-interface:compileJava (Thread[Execution worker for ':',5,main]) completed. Took 1 mins 5.713 secs.
+2020-12-05T07:26:54.7889245Z :without-interface:compileJava (Thread[Daemon worker,5,main]) completed. Took 1 mins 5.407 secs.
+2020-12-05T07:28:09.1204993Z :without-interface:compileJava (Thread[Daemon worker,5,main]) completed. Took 1 mins 5.038 secs.
