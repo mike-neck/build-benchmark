@@ -13,5 +13,5 @@ dependencies {
 }
 
 tasks.withType(JavaCompile) {
-    options.compilerArgs += ['-J-Xmx2g', '-J-Xms2g']
+    options.forkOptions.jvmArgs += ['-J-Xmx2g', '-J-Xms2g']
 }
