@@ -23,7 +23,7 @@ jobs:
 
       - name: Gradle Cache
         id: gradle-cache
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
           path: ~/.gradle/caches
           key: gradle-${{ hashFiles('**/*.gradle') }}-${{ hashFiles('**/gradle-wrapper.properties') }}
@@ -31,11 +31,11 @@ jobs:
 
       - name: Build Cache
         id: build-cache
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
           path: ".cache"
-          key: "cache-${{ matrix.interface }}-${{ github.run_number }}"
-          restore-keys: "cache-${{ matrix.interface }}-"
+          key: "cache-${{ matrix.interface }}-${{ hashFiles('generator/src/main/resources/domains.yml') }}"
+          restore-keys: "cache-"
 
       - name: Cache Hit
         run: |
