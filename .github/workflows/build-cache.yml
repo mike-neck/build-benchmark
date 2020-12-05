@@ -34,7 +34,8 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ".cache"
-          key: "cache-${{ github.run_number }}-${{ matrix.interface }}"
+          key: "cache-${{ matrix.interface }}-${{ github.run_number }}"
+          restory-keys: "cache-${{ matrix.interface }}-"
 
       - name: Cache Hit
         run: |
