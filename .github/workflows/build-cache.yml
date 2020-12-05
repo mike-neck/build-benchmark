@@ -42,6 +42,9 @@ jobs:
           echo "gradle cache: ${{ steps.gradle-cache.outputs.cache-hit }}"
           echo "build cache : ${{ steps.build-cache.outputs.cache-hit }}"
 
+      - name: Create Build Cache directory manually
+       run: mkdir .cache
+
       - name: Test before test
         env:
           BUILD_CACHE: use
@@ -81,4 +84,8 @@ jobs:
           path: result-${{ matrix.interface }}.txt
 
       - name: show final directory status
-        run: ls -la
+        run: |
+          echo "working directory"
+          ls -la
+          echo "cache directory"
+          ls .cache/
