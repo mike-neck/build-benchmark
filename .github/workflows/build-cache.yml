@@ -79,3 +79,6 @@ jobs:
         with:
           name: ${{ matrix.interface }}-result
           path: result-${{ matrix.interface }}.txt
+
+      - name: show final directory status
+        run: ls -la
