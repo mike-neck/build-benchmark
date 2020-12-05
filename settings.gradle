@@ -14,10 +14,12 @@ include 'with-interface'
 include 'without-interface'
 
 if (System.getenv('BUILD_CACHE') != null) {
+    logger.lifecycle('using build cache: {}', System.getenv('BUILD_CACHE'))
     buildCache {
         local {
             directory = new File('.cache')
             removeUnusedEntriesAfterDays 20
+            enabled = true
         }
     }
 }
