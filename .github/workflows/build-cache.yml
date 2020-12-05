@@ -78,11 +78,15 @@ jobs:
           ./gradlew :generator:generate-${{ matrix.interface }}-interface-no-logging
           ./gradlew --build-cache :${{ matrix.interface }}-interface:classes --info | tee -a result-${{ matrix.interface }}.txt
 
+      - name: Show logs
+        run: |
+          grep complete "result-${{ matrix.interface }}.txt" | grep compileJava | grep with | tee result.txt
+
       - name: upload-artifact
         uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.interface }}-result
-          path: result-${{ matrix.interface }}.txt
+          path: result.txt
 
       - name: show final directory status
         run: |
