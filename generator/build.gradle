@@ -50,6 +50,7 @@ tasks.withType(JavaExec) {
       it.mainClass.set('com.example.generator.Generator')
       it.classpath(configurations.runtimeClasspath, sourceSets.main.output)
       it.outputs.dir(rootProject.file("${targetProject}/src/main/java"))
+      it.outputs.upToDateWhen { false }
       it.args = applicationParameters(loggingApp, targetProject)
       it.environment('LOG', 'size')
     }

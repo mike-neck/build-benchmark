@@ -15,17 +15,17 @@
  */
 package com.example.generator;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import org.jetbrains.annotations.NotNull;
 
 @FunctionalInterface
-public interface GeneratorLimit<@NotNull T> extends UnaryOperator<@NotNull Collection<T>> {
+public interface GeneratorLimit<@NotNull T> extends UnaryOperator<@NotNull Iterable<T>> {
 
   @NotNull
   static <T> GeneratorLimit<T> unlimited() {
@@ -35,8 +35,9 @@ public interface GeneratorLimit<@NotNull T> extends UnaryOperator<@NotNull Colle
   @NotNull
   static <T> GeneratorLimit<T> limited(final int size) {
     assert size > 0 : "invalid number (%d), expected more than 0".formatted(size);
-    return collection -> {
-      var list = new ArrayList<>(collection);
+    return iterable -> {
+      List<T> list =
+          StreamSupport.stream(iterable.spliterator(), false).collect(Collectors.toList());
       Collections.shuffle(list);
       return list.stream().limit(size).collect(Collectors.toUnmodifiableList());
     };
