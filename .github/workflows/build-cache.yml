@@ -59,7 +59,7 @@ jobs:
       - name: "Generate Java files (logging)"
         env:
           BUILD_CACHE: use
-          GENERATOR_LIMIT: 30
+          GENERATOR_LIMIT: 300
         run: |
           echo "==${{ matrix.interface }}-logging==" >> result-${{ matrix.interface }}.txt
           ./gradlew :generator:generate-${{ matrix.interface }}-interface-logging
@@ -68,7 +68,7 @@ jobs:
       - name: "Generate Java files (no-logging)"
         env:
           BUILD_CACHE: use
-          GENERATOR_LIMIT: 30
+          GENERATOR_LIMIT: 300
         run: |
           echo "==${{ matrix.interface }}-no-logging2==" >> result-${{ matrix.interface }}.txt
           ./gradlew :generator:generate-${{ matrix.interface }}-interface-no-logging
