@@ -1,0 +1,78 @@
+name: "Using Build Cache"
+on:
+  push: {}
+  workflow_dispatch: {}
+
+jobs:
+  using-cache-tests:
+    strategy:
+      matrix:
+        interface:
+          - with
+          - without
+    name: "Using-Build-Cache-${{ matrix.interface }}-interface"
+    runs-on: ubuntu-20.04
+    steps:
+      - name: setup Java
+        uses: actions/setup-java@v1.4.3
+        with:
+          java-version: '15'
+
+      - uses: actions/checkout@v2
+        name: checkout
+
+      - name: Gradle Cache
+        id: gradle-cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: gradle-${{ hashFiles('**/*.gradle') }}-${{ hashFiles('**/gradle-wrapper.properties') }}
+          restore-keys: gradle-
+
+      - name: Build Cache
+        id: build-cache
+        uses: actions/cache@v1
+        with:
+          path: ".cache"
+          key: "cache-${{ github.run_number }}-${{ matrix.interface }}"
+
+      - name: Cache Hit
+        run: |
+          echo "gradle cache: ${{ steps.gradle-cache.outputs.cache-hit }}"
+          echo "build cache : ${{ steps.build-cache.outputs.cache-hit }}"
+
+      - name: Test before test
+        env:
+          BUILD_CACHE: use
+        run: |
+          ./gradlew :generator:build :lib:build
+
+      - name: "Generate Java files (no-logging 1)"
+        env:
+          BUILD_CACHE: use
+        run: |
+          echo "==${{ matrix.interface }}-no-logging==" >> result-${{ matrix.interface }}.txt
+          ./gradlew :generator:generate-${{ matrix.interface }}-interface-no-logging
+          ./gradlew :with-interface:classes --info | tee -a result-${{ matrix.interface }}.txt
+
+      - name: "Generate Java files (logging)"
+        env:
+          BUILD_CACHE: use
+        run: |
+          echo "==${{ matrix.interface }}-logging==" >> result-${{ matrix.interface }}.txt
+          ./gradlew :generator:generate-${{ matrix.interface }}-interface-logging
+          ./gradlew :with-interface:classes --info | tee -a result-${{ matrix.interface }}.txt
+
+      - name: "Generate Java files (no-logging 2)"
+        env:
+          BUILD_CACHE: use
+        run: |
+          echo "==${{ matrix.interface }}-no-logging2==" >> result-${{ matrix.interface }}.txt
+          ./gradlew :generator:generate-${{ matrix.interface }}-interface-no-logging
+          ./gradlew :with-interface:classes --info | tee -a result-${{ matrix.interface }}.txt
+
+      - name: upload-artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.interface }}-result
+          path: result-${{ matrix.interface }}.txt
