@@ -11,3 +11,7 @@ dependencies {
     implementation project(':lib')
     implementation 'org.slf4j:slf4j-api:1.7.30'
 }
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs += ['-Xmx2g', '-Xms2g']
+}
