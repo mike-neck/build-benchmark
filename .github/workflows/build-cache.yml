@@ -57,7 +57,7 @@ jobs:
         run: |
           echo "==${{ matrix.interface }}-no-logging==" >> result-${{ matrix.interface }}.txt
           ./gradlew :generator:generate-${{ matrix.interface }}-interface-no-logging
-          ./gradlew :${{ matrix.interface }}-interface:classes --info | tee -a result-${{ matrix.interface }}.txt
+          ./gradlew --build-cache :${{ matrix.interface }}-interface:classes --info | tee -a result-${{ matrix.interface }}.txt
 
       - name: "Generate Java files (logging)"
         env:
@@ -66,7 +66,7 @@ jobs:
         run: |
           echo "==${{ matrix.interface }}-logging==" >> result-${{ matrix.interface }}.txt
           ./gradlew :generator:generate-${{ matrix.interface }}-interface-logging
-          ./gradlew :${{ matrix.interface }}-interface:classes --info | tee -a result-${{ matrix.interface }}.txt
+          ./gradlew --build-cache :${{ matrix.interface }}-interface:classes --info | tee -a result-${{ matrix.interface }}.txt
 
       - name: "Generate Java files (no-logging)"
         env:
@@ -75,7 +75,7 @@ jobs:
         run: |
           echo "==${{ matrix.interface }}-no-logging2==" >> result-${{ matrix.interface }}.txt
           ./gradlew :generator:generate-${{ matrix.interface }}-interface-no-logging
-          ./gradlew :${{ matrix.interface }}-interface:classes --info | tee -a result-${{ matrix.interface }}.txt
+          ./gradlew --build-cache :${{ matrix.interface }}-interface:classes --info | tee -a result-${{ matrix.interface }}.txt
 
       - name: upload-artifact
         uses: actions/upload-artifact@v2
