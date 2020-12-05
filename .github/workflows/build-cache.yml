@@ -35,7 +35,7 @@ jobs:
         with:
           path: ".cache"
           key: "cache-${{ matrix.interface }}-${{ github.run_number }}"
-          restory-keys: "cache-${{ matrix.interface }}-"
+          restore-keys: "cache-${{ matrix.interface }}-"
 
       - name: Cache Hit
         run: |
@@ -48,10 +48,9 @@ jobs:
         run: |
           ./gradlew :generator:build :lib:build
 
-      - name: "Generate Java files (no-logging 1)"
+      - name: "Generate Java files (pre-build)"
         env:
           BUILD_CACHE: use
-          GENERATOR_LIMIT: 30
         run: |
           echo "==${{ matrix.interface }}-no-logging==" >> result-${{ matrix.interface }}.txt
           ./gradlew :generator:generate-${{ matrix.interface }}-interface-no-logging
@@ -66,7 +65,7 @@ jobs:
           ./gradlew :generator:generate-${{ matrix.interface }}-interface-logging
           ./gradlew :${{ matrix.interface }}-interface:classes --info | tee -a result-${{ matrix.interface }}.txt
 
-      - name: "Generate Java files (no-logging 2)"
+      - name: "Generate Java files (no-logging)"
         env:
           BUILD_CACHE: use
           GENERATOR_LIMIT: 30
