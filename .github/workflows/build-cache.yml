@@ -78,6 +78,24 @@ jobs:
           ./gradlew :generator:generate-${{ matrix.interface }}-interface-no-logging
           ./gradlew --build-cache :${{ matrix.interface }}-interface:classes --info | tee -a result-${{ matrix.interface }}.txt
 
+      - name: "Generate Java files (logging one more time)"
+        env:
+          BUILD_CACHE: use
+          GENERATOR_LIMIT: 300
+        run: |
+          echo "==${{ matrix.interface }}-logging==" >> result-${{ matrix.interface }}.txt
+          ./gradlew :generator:generate-${{ matrix.interface }}-interface-logging
+          ./gradlew --build-cache :${{ matrix.interface }}-interface:classes --info | tee -a result-${{ matrix.interface }}.txt
+
+      - name: "Generate Java files (no-logging one more time)"
+        env:
+          BUILD_CACHE: use
+          GENERATOR_LIMIT: 300
+        run: |
+          echo "==${{ matrix.interface }}-no-logging2==" >> result-${{ matrix.interface }}.txt
+          ./gradlew :generator:generate-${{ matrix.interface }}-interface-no-logging
+          ./gradlew --build-cache :${{ matrix.interface }}-interface:classes --info | tee -a result-${{ matrix.interface }}.txt
+
       - name: Show logs
         run: |
           grep complete "result-${{ matrix.interface }}.txt" | grep compileJava | grep with | tee result.txt
