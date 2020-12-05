@@ -52,6 +52,6 @@ tasks.withType(JavaExec) {
 }
 
 task generateDomainsYaml(type: RandomWordsGenerateTask, group: 'build') {
-  size.set(20_000)
+  size.set(6_000)
   outputFile.set(file('src/main/resources/domains.yml'))
 }
