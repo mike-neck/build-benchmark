@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -67,23 +68,29 @@ public class Generator {
   }
 
   private static Iterable<Generator> newGenerators(
-      @NotNull Interface inf, @NotNull LoggingApp logging, @NotNull Domains domains) {
-    return StreamSupport.stream(domains.spliterator(), false)
-        .flatMap(
-            name ->
-                StreamSupport.stream(JavaDefinitionFactory.factories().spliterator(), false)
-                    .map(factory -> factory.create(name, logging, inf)))
-        .map(def -> new Generator(inf, def))
-        .collect(Collectors.toUnmodifiableList());
+      @NotNull Interface inf,
+      @NotNull LoggingApp logging,
+      @NotNull Domains domains,
+      @NotNull GeneratorLimit<Generator> generatorLimit) {
+    List<Generator> generators =
+        StreamSupport.stream(domains.spliterator(), false)
+            .flatMap(
+                name ->
+                    StreamSupport.stream(JavaDefinitionFactory.factories().spliterator(), false)
+                        .map(factory -> factory.create(name, logging, inf)))
+            .map(def -> new Generator(inf, def))
+            .collect(Collectors.toUnmodifiableList());
+    return generatorLimit.apply(generators);
   }
 
   public static void main(String[] args) {
     LoggingApp logging = loggingApp(args);
     Interface inf = inf(args);
+    GeneratorLimit<Generator> generatorLimit = GeneratorLimit.fromParams(args);
     GeneratorLog generatorLog = GeneratorLog.fromEnvironment();
 
     Domains domains = Domains.load();
-    Iterable<Generator> generators = newGenerators(inf, logging, domains);
+    Iterable<Generator> generators = newGenerators(inf, logging, domains, generatorLimit);
     generatorLog.iterate(generators, Generator::write);
   }
 }

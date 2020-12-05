@@ -31,8 +31,14 @@ jobs:
 
       - name: Test before test
         run: |
-          ./gradlew :generator:test
+          ./gradlew :generator:build :lib:build
+
+      - name: Prepare test
+        run: |
+          ./gradlew :generator:generate-${{ matrix.interface }}-interface-no-logging
+          ./gradlew :${{ matrix.interface }}-interface:classes --info
 
       - name: Main test
         run: "./test-${{ matrix.interface }}-inf.sh"
-    
+        env:
+          GENERATOR_LIMIT: 30

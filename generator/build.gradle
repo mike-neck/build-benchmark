@@ -35,6 +35,11 @@ tasks.withType(JavaExec) {
 }
 
 ['with-interface', 'without-interface'].each { String targetProject ->
+  def generatorLimit = System.getenv('GENERATOR_LIMIT')
+  Closure<List<String>> applicationParameters = { String[] args ->
+    if (generatorLimit == null) [args].flatten() as List<String>
+    else ["limit:$generatorLimit", args].flatten() as List<String>
+  }
   [true, false].each { boolean useLogger ->
     String loggingApp = useLogger? 'logging': 'no-logging'
     JavaExec javaExecTask = tasks.create("generate-${targetProject}-$loggingApp", JavaExec)
@@ -45,7 +50,7 @@ tasks.withType(JavaExec) {
       it.mainClass.set('com.example.generator.Generator')
       it.classpath(configurations.runtimeClasspath, sourceSets.main.output)
       it.outputs.dir(rootProject.file("${targetProject}/src/main/java"))
-      it.args = [loggingApp, targetProject]
+      it.args = applicationParameters(loggingApp, targetProject)
       it.environment('LOG', 'size')
     }
   }

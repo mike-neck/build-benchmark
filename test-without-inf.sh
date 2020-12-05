@@ -2,13 +2,8 @@
 
 set -eu
 
-./gradlew clean
-./gradlew :generator:classes :lib:assemble
-
-./gradlew :generator:generate-without-interface-no-logging
-./gradlew :without-interface:classes --info
-
 echo '====starting test===='
+echo "==${GENERATOR_LIMIT}=="
 echo '====1===='
 
 ./gradlew :generator:generate-without-interface-logging
