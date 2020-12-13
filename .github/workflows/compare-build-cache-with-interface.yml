@@ -1,0 +1,160 @@
+name: Compare No Cache vs Build Cache With Interface
+on:
+  push:
+    branches:
+      - build-cache
+
+jobs: 
+  no-cache:
+    name: "No Cache ${{ github.run_number }}"
+    runs-on: ubuntu-20.04
+    timeout-minutes: 15
+    env:
+      BUILD_CACHE: use
+      REPORT_DIR: build/no-cache-report
+      RAW_LOG_FILE: build/no-cache-report/log.txt
+      REPORT_FILE: build/no-cache-report/report.txt
+    steps:
+
+      - name: setup Java
+        uses: actions/setup-java@v1.4.3
+        with:
+          java-version: '15'
+
+      - uses: actions/checkout@v2
+        name: checkout
+
+      - name: Gradle Cache
+        id: gradle-cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: gradle-${{ hashFiles('**/*.gradle') }}-${{ hashFiles('**/gradle-wrapper.properties') }}
+          restore-keys: gradle-
+
+      - name: Build Cache
+        id: build-cache
+        uses: actions/cache@v2
+        with:
+          path: ".cache"
+          key: "cache-${{ github.run_number }}-${{ hashFiles('generator/src/main/resources/domains.yml') }}"
+
+      - name: Cache Hit
+        run: |
+          echo "gradle cache: ${{ steps.gradle-cache.outputs.cache-hit }}"
+          echo "build cache : ${{ steps.build-cache.outputs.cache-hit }}"
+
+      - name: Create Build Cache directory manually
+        run: |
+          [[ -d .cache ]] || mkdir .cache
+
+      - name: Test before test
+        run: |
+          ./gradlew :generator:build :lib:build
+
+      - name: Generate Java files
+        run: |
+          mkdir -p "${REPORT_DIR}"
+          echo "== NO CACHE REPORT ==" >> "${RAW_LOG_FILE}"
+          echo "== NO CACHE REPORT ==" >> "${REPORT_FILE}"
+          ./gradlew :generator:generate-with-interface-no-logging
+
+      - name: Compile Java Classes
+        run: |
+          ./gradlew --build-cache :with-interface:assemble --info | tee -a "${RAW_LOG_FILE}"
+
+      - name: Show Log File
+        run: |
+          grep complete "${RAW_LOG_FILE}" | grep compileJava | grep with | tee -a "${REPORT_FILE}"
+
+      - name: upload-artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-cache-no-cache
+          path: |
+            "${{ env.RAW_LOG_FILE }}"
+            "${{ env.REPORT_FILE }}"
+
+  using-cache:
+    name: "Using Cache ${{ github.run_number }} - ${{ matrix.edit }}"
+    runs-on: ubuntu-20.04
+    timeout-minutes: 15
+    strategy:
+      matrix: 
+        edit:
+          - no-edit
+          - edit
+    needs: 
+      - no-cache
+    env:
+      BUILD_CACHE: use
+      REPORT_DIR: build/using-cache-report-${{ matrix.edit }}
+      RAW_LOG_FILE: build/using-cache-report-${{ matrix.edit }}/log.txt
+      REPORT_FILE: build/using-cache-report-${{ matrix.edit }}/report.txt
+    steps:    
+        - name: setup Java
+          uses: actions/setup-java@v1.4.3
+          with:
+            java-version: '15'
+
+        - uses: actions/checkout@v2
+          name: checkout
+
+        - name: Gradle Cache
+          id: gradle-cache
+          uses: actions/cache@v2
+          with:
+            path: ~/.gradle/caches
+            key: gradle-${{ hashFiles('**/*.gradle') }}-${{ hashFiles('**/gradle-wrapper.properties') }}
+            restore-keys: gradle-
+
+        - name: Build Cache
+          id: build-cache
+          uses: actions/cache@v2
+          with:
+            path: ".cache"
+            key: "cache-${{ github.run_number }}-${{ hashFiles('generator/src/main/resources/domains.yml') }}"
+            restore-keys: "cache-${{ github.run_number }}-"
+
+        - name: Cache Hit
+          run: |
+            echo "gradle cache: ${{ steps.gradle-cache.outputs.cache-hit }}"
+            echo "build cache : ${{ steps.build-cache.outputs.cache-hit }}"
+
+        - name: Create Build Cache directory manually
+          run: |
+            [[ -d .cache ]] || mkdir .cache
+
+        - name: Test before test
+          run: |
+            ./gradlew :generator:build :lib:build
+
+        - name: Generate Java files
+          run: |
+            mkdir -p "${REPORT_DIR}"
+            echo "== NO CACHE REPORT ==" >> "${RAW_LOG_FILE}"
+            echo "== NO CACHE REPORT ==" >> "${REPORT_FILE}"
+            ./gradlew :generator:generate-with-interface-no-logging
+
+        - name: "Edit Java files If ${{ matrix.edit }} == edit"
+          if: matrix.edit == 'edit'
+          env:
+            GENERATOR_LIMIT: 300
+          run: |
+            ./gradlew :generator:generate-with-interface-logging
+
+        - name: Compile Java Classes
+          run: |
+            ./gradlew --build-cache :with-interface:assemble --info | tee -a "${RAW_LOG_FILE}"
+
+        - name: Show Log File
+          run: |
+            grep complete "${RAW_LOG_FILE}" | grep compileJava | grep with | tee -a "${REPORT_FILE}"
+
+        - name: upload-artifact
+          uses: actions/upload-artifact@v2
+          with:
+            name: build-cache-using-cache-${{ matrix.edit }}
+            path: |
+              "${{ env.RAW_LOG_FILE }}"
+              "${{ env.REPORT_FILE }}"
