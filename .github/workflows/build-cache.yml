@@ -1,6 +1,8 @@
 name: "Using Build Cache"
 on:
-  push: {}
+  push: 
+    branches: 
+      - main
   workflow_dispatch: {}
 
 jobs:
