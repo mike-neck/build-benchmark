@@ -36,7 +36,7 @@ tasks.withType(JavaExec) {
 
 ['with-interface', 'without-interface'].each { String targetProject ->
   def generatorLimit = System.getenv('GENERATOR_LIMIT')
-  Closure<List<String>> applicationParameters = { String[] args ->
+  Closure<List<String>> applicationParameters = { String... args ->
     if (generatorLimit == null) [args].flatten() as List<String>
     else ["limit:$generatorLimit", args].flatten() as List<String>
   }
