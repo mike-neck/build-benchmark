@@ -139,7 +139,7 @@ jobs:
         - name: "Edit Java files If ${{ matrix.edit }} == edit"
           if: matrix.edit == 'edit'
           env:
-            GENERATOR_LIMIT: 300
+            GENERATOR_LIMIT: 60
           run: |
             ./gradlew :generator:generate-with-interface-logging
 
