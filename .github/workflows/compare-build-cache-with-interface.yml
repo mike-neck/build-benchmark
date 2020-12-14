@@ -72,8 +72,8 @@ jobs:
         with:
           name: build-cache-no-cache
           path: |
-            "${{ env.RAW_LOG_FILE }}"
-            "${{ env.REPORT_FILE }}"
+            ${{ env.RAW_LOG_FILE }}
+            ${{ env.REPORT_FILE }}
 
   using-cache:
     name: "Using Cache ${{ github.run_number }} - ${{ matrix.edit }}"
@@ -168,5 +168,5 @@ jobs:
           with:
             name: build-cache-using-cache-${{ matrix.edit }}
             path: |
-              "${{ env.RAW_LOG_FILE }}"
-              "${{ env.REPORT_FILE }}"
+              ${{ env.RAW_LOG_FILE }}
+              ${{ env.REPORT_FILE }}
