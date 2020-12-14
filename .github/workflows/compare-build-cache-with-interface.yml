@@ -76,7 +76,7 @@ jobs:
             ${{ env.REPORT_FILE }}
 
   using-cache:
-    name: "Using Cache With Interface ${{ github.run_number }} - ${{ matrix.edit }}"
+    name: "Using Cache With Interface ${{ github.run_number }} - ${{ matrix.edit }}(${{ matrix.run }})"
     runs-on: ubuntu-20.04
     timeout-minutes: 15
     strategy:
@@ -84,6 +84,12 @@ jobs:
         edit:
           - no-edit
           - edit
+        run:
+          - 1
+          - 2
+          - 3
+          - 4
+          - 5
     needs: 
       - no-cache
     env:
@@ -166,7 +172,5 @@ jobs:
         - name: upload-artifact
           uses: actions/upload-artifact@v2
           with:
-            name: build-cache-using-cache-${{ matrix.edit }}
-            path: |
-              ${{ env.RAW_LOG_FILE }}
-              ${{ env.REPORT_FILE }}
+            name: build-cache-using-cache-${{ matrix.edit }}-${{ matrix.run }}
+            path: ${{ env.REPORT_FILE }}
