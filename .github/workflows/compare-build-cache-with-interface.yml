@@ -6,7 +6,7 @@ on:
 
 jobs: 
   no-cache:
-    name: "No Cache ${{ github.run_number }}"
+    name: "No Cache With Interface ${{ github.run_number }}"
     runs-on: ubuntu-20.04
     timeout-minutes: 15
     env:
@@ -37,7 +37,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ".cache"
-          key: "cache-${{ github.run_number }}-${{ hashFiles('generator/src/main/resources/domains.yml') }}"
+          key: "cache-with-interface-${{ github.run_number }}-${{ hashFiles('generator/src/main/resources/domains.yml') }}"
 
       - name: Cache Hit
         run: |
@@ -76,7 +76,7 @@ jobs:
             ${{ env.REPORT_FILE }}
 
   using-cache:
-    name: "Using Cache ${{ github.run_number }} - ${{ matrix.edit }}"
+    name: "Using Cache With Interface ${{ github.run_number }} - ${{ matrix.edit }}"
     runs-on: ubuntu-20.04
     timeout-minutes: 15
     strategy:
@@ -113,8 +113,8 @@ jobs:
           uses: actions/cache@v2
           with:
             path: ".cache"
-            key: "cache-${{ github.run_number }}-${{ hashFiles('generator/src/main/resources/domains.yml') }}"
-            restore-keys: "cache-${{ github.run_number }}-"
+            key: "cache-with-interface-${{ github.run_number }}-${{ hashFiles('generator/src/main/resources/domains.yml') }}"
+            restore-keys: "cache-with-interface-${{ github.run_number }}-"
 
         - name: Cache Hit
           run: |
